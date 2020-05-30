@@ -37,15 +37,14 @@ public class MSVC2017x64EnvFactory implements EnvFactory {
             throw new NativeBuildException("Unable to construct Visual Studio install directory", e);
         }
         if (vcInstallDir == null) return null;
-        Map<String, String> result = null;
+        Map<String, String> result;
         try {
             File tmpFile = File.createTempFile("msenv", ".bat");
-            StringBuilder buffer = new StringBuilder();
-            buffer.append("@echo off\r\n");
-            buffer.append("call \"").append(vcInstallDir).append("\"").append("\\VC\\Auxiliary\\Build\\vcvarsall.bat x64\n\r");
-            buffer.append("echo " + EnvStreamConsumer.START_PARSING_INDICATOR).append("\r\n");
-            buffer.append("set\n\r");
-            FileUtils.fileWrite(tmpFile.getAbsolutePath(), buffer.toString());
+            String buffer = "@echo off\r\n" +
+                    "call \"" + vcInstallDir + "\"" + "\\VC\\Auxiliary\\Build\\vcvarsall.bat x64\n\r" +
+                    "echo " + EnvStreamConsumer.START_PARSING_INDICATOR + "\r\n" +
+                    "set\n\r";
+            FileUtils.fileWrite(tmpFile.getAbsolutePath(), buffer);
             Commandline cl = new Commandline();
             cl.setExecutable(tmpFile.getAbsolutePath());
             StreamConsumer stderr = new DefaultConsumer();
